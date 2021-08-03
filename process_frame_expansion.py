@@ -29,7 +29,7 @@ if __name__ == "__main__":
     args = argv[1:]
     # print(args)
     for arg in args:
-        dataset_name = arg.strip('.\\').removesuffix('.json')
+        dataset_name = arg.strip('.\\').replace('.json', '')
         print("Analyzing file: %s" % dataset_name)
         results = read_results_file(arg)
         step_dist = results['metadata']['z_axis']['step_dist']
