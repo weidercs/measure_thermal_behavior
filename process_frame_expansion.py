@@ -53,7 +53,8 @@ if __name__ == "__main__":
         temp_data_sd['delta_z'] = temp_data_sd['mcu_z']\
             .transform(lambda x: np.sqrt(x**2 + x.iloc[0]**2)*step_dist)
 
-        filtered_mean = temp_data_mean[(temp_data_sd['mcu_z'] < 2) 
+        filtered_mean = temp_data_mean[(temp_data_sd['mcu_z'] < 2)
+            & (temp_data_mean['bed_target'] > 0)
             & (temp_data_mean['frame_temp'] < temp_data_mean['frame_temp'].max()-0.3)]
 
 
