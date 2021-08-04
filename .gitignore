@@ -1,0 +1,4 @@
+# Ignore results files
+*.json
+# and subdirectories
+**/
