@@ -27,17 +27,20 @@ MEASURE_INTERVAL = 1
 N_SAMPLES = 3
 HOT_DURATION = 3                    # time after bed temp reached to continue
                                     # measuring, in hours
-COOL_DURATION = 2                   # hours to continue measuring after heaters
+COOL_DURATION = 0                   # hours to continue measuring after heaters
                                     # are disabled
 MEASURE_GCODE = 'G28 Z'             # G-code called on repeated measurements, single line/macro only
 QGL_CMD = "QUAD_GANTRY_LEVEL"       # command for QGL; e.g. "QUAD_GANTRY_LEVEL" or None if no QGL.
+MESH_CMD = "BED_MESH_CALIBRATE"
 
+# Full config section name of the frame temperature sensor
+FRAME_SENSOR = "temperature_sensor frame"
 # chamber thermistor config name. Change to match your own, or "" if none
 # will also work with temperature_fan configs
 CHAMBER_SENSOR = "temperature_sensor chamber"
-FRAME_SENSOR = "temperature_sensor frame"
-EXTRA_SENSORS = {"frame1_t": "temperature_sensor frame1",
-                 "frame2_t": "temperature_sensor frame2"}
+# Extra temperature sensors to collect. Use same format as above but seperate
+# quoted names with commas (if more than one).
+EXTRA_SENSORS = {}
 
 #####################################
 
@@ -114,6 +117,16 @@ def write_metadata(meta):
                 dataout.write('# %s=%s\n' % (item, meta[section][item]))
         dataout.write('### METADATA END ###\n')
 
+def query_axis_bounds(axis):
+    resp = get(BASE_URL + '/printer/objects/query?configfile').json()
+    config = resp['result']['status']['configfile']['settings']
+
+    stepper = 'stepper_%s' % axis
+
+    axis_min = config[stepper]['position_min']
+    axis_max = config[stepper]['position_max']
+
+    return(axis_min, axis_max) 
 
 def query_xy_middle():
     resp = get(BASE_URL + '/printer/objects/query?configfile').json()
@@ -157,6 +170,19 @@ def park_head_center():
     send_gcode_nowait("G1 Z10 F300")
 
     park_cmd = "G1 X%.1f Y%.1f F18000" % (xy_coords[0], xy_coords[1])
+    send_gcode_nowait(park_cmd)
+
+
+def park_head_high():
+    xmin, xmax = query_axis_bounds('x')
+    ymin, ymax = query_axis_bounds('y')
+    zmin, zmax = query_axis_bounds('z')
+
+    xpark = xmax
+    ypark = ymax
+    zpark = zmax * 0.8
+
+    park_cmd = "G1 X%.1f Y%.1f Z%.1f F1000" % (xpark, ypark, zpark)
     send_gcode_nowait(park_cmd)
 
 
@@ -213,7 +239,7 @@ def clear_bed_mesh():
 
 def take_bed_mesh():
     mesh_received = False
-    cmd = 'BED_MESH_CALIBRATE'
+    cmd = MESH_CMD
 
     print("Taking bed mesh measurement...", end='', flush=True)
     send_gcode_nowait(cmd)
@@ -385,7 +411,7 @@ def main():
     set_bedtemp(BED_TEMPERATURE)
     set_hetemp(HE_TEMPERATURE)
 
-    park_head_center()
+    park_head_high()
     wait_for_bedtemp()
     start_time = datetime.now()
 
