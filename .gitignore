@@ -1,4 +1,5 @@
 # Ignore results files
 *.json
+*.png
 # and subdirectories
 **/
