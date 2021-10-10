@@ -69,17 +69,10 @@ def gather_metadata():
         micro = config_z['microsteps']
         if 'gear_ratio' in config_z.keys():
             gear_ratio_conf = config_z['gear_ratio']
-<<<<<<< HEAD
-            if type(gear_ratio_conf) is string:
-                gear_ratio_conf = gear_ratio_conf.split(':')             
-            gear_ratio = float(gear_ratio_conf[0])
-            for reduction in gear_ratio_conf[1:]:
-=======
             if type(gear_ratio_conf) is str:
                 gear_ratio_conf = gear_ratio_conf.split(':')             
             gear_ratio = float(gear_ratio_conf[0][0])
             for reduction in gear_ratio_conf[0][1:]:
->>>>>>> tanaes-main
                 gear_ratio = gear_ratio/float(reduction)
         else:
             gear_ratio = 1.
