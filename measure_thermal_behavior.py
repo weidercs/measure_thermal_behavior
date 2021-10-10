@@ -19,7 +19,7 @@ NOTES = ''              # anything note-worthy about this particular run,
 #####################################
 
 ######### CONFIGURATION #############
-BASE_URL = 'http://127.0.0.1'       # printer URL (e.g. http://192.168.1.15)
+BASE_URL = 'http://127.0.0.1:7125'  # printer URL (e.g. http://192.168.1.15)
                                     # leave default if running locally
 BED_TEMPERATURE = 105               # bed temperature for measurements
 HE_TEMPERATURE = 100                # extruder temperature for measurements
@@ -68,8 +68,12 @@ def gather_metadata():
         steps_per = config_z['full_steps_per_rotation']
         micro = config_z['microsteps']
         if 'gear_ratio' in config_z.keys():
-            gear_ratio_conf = config_z['gear_ratio'].split(':')
-            gear_ratio = float(gear_ratio_conf[0])/float(gear_ratio_conf[1])
+            gear_ratio_conf = config_z['gear_ratio']
+            if type(gear_ratio_conf) is str:
+                gear_ratio_conf = gear_ratio_conf.split(':')             
+            gear_ratio = float(gear_ratio_conf[0][0])
+            for reduction in gear_ratio_conf[0][1:]:
+                gear_ratio = gear_ratio/float(reduction)
         else:
             gear_ratio = 1.
         step_distance = (rot_dist / (micro * steps_per))/gear_ratio
