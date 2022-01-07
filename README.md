@@ -8,7 +8,7 @@ frame heats up. It does this by interfacing with the Moonraker API, so you will 
 
 First, download the script `measure_thermal_behavior.py` to your printer's Pi. My favorite way to do this is to ssh into the Pi and just clone this git repository:
 
-`git clone https://github.com/tanaes/measure_thermal_behavior.git`
+`git clone https://github.com/alchemyEngine/measure_thermal_behavior`
 
 
 ### Edit script for your printer
@@ -33,8 +33,8 @@ BASE_URL = 'http://127.0.0.1'       # printer URL (e.g. http://192.168.1.15)
                                     # leave default if running locally
 BED_TEMPERATURE = 105               # bed temperature for measurements
 HE_TEMPERATURE = 100                # extruder temperature for measurements
-MEASURE_INTERVAL = 1
-N_SAMPLES = 3
+MEASURE_INTERVAL = 1                # minutes between repeated homing measures
+N_SAMPLES = 3                       # number of repeated homing measures
 HOT_DURATION = 3                    # time after bed temp reached to continue
                                     # measuring, in hours
 COOL_DURATION = 0                   # hours to continue measuring after heaters
@@ -155,9 +155,14 @@ Then, you can use pip via python3 to install the plotting script dependencies us
 
 `python3 -m pip install -r requirements.txt`
 
-Finally, to generate the plots, just call:
 
-`process_meshes.py thermal_quant_{}.json`.
+Finally, there are two processing scripts that can be run on the json results file:
+1. `process_meshes.py`, which will output plots pertaining to the bed mesh measurements
+
+    E.g: `process_meshes.py thermal_quant_{}.json`.
+2. `process_frame_expansion.py`, which will output plots pertaining to thermal expansion measurements. Check `temp_coeff_fitting.png` to ensure a proper linear fit and the `temp_coeff` value for the `[frame_expansion_compensation]` configuration section.
+
+    E.g.: `process_frame_expansion.py thermal_quant_{}.json`
 
 You can include as many json-formatted datafiles as you want as positional arguments.
 
