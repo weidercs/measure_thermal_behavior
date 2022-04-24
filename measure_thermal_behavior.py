@@ -8,21 +8,21 @@ import json
 
 ######### META DATA #################
 # For data collection organizational purposes
-USER_ID = ''            # e.g. Discord handle
-PRINTER_MODEL = ''      # e.g. 'voron_v2_350'
-HOME_TYPE = ''          # e.g. 'nozzle_pin', 'microswitch_probe', etc.
-PROBE_TYPE = ''         # e.g. 'klicky', 'omron', 'bltouch', etc.
-X_RAILS = ''            # e.g. '1x_mgn12_front', '2x_mgn9'
-BACKERS = ''            # e.g. 'steel_x_y', 'Ti_x-steel_y', 'mgn9_y'
-NOTES = ''              # anything note-worthy about this particular run,
+USER_ID = 'CWeed14#8922'            # e.g. Discord handle
+PRINTER_MODEL = 'voron_v2_350'      # e.g. 'voron_v2_350'
+HOME_TYPE = 'nozzle_pin'          # e.g. 'nozzle_pin', 'microswitch_probe', etc.
+PROBE_TYPE = 'klicky'         # e.g. 'klicky', 'omron', 'bltouch', etc.
+X_RAILS = '1x_mgn12_front'            # e.g. '1x_mgn12_front', '2x_mgn9'
+BACKERS = 'Ti_x_y'            # e.g. 'steel_x_y', 'Ti_x-steel_y', 'mgn9_y'
+NOTES = 'MRW_Kinematic_Bed'              # anything note-worthy about this particular run,
                         #     no "=" characters
 #####################################
 
 ######### CONFIGURATION #############
 BASE_URL = 'http://127.0.0.1:7125'  # printer URL (e.g. http://192.168.1.15)
                                     # leave default if running locally
-BED_TEMPERATURE = 105               # bed temperature for measurements
-HE_TEMPERATURE = 100                # extruder temperature for measurements
+BED_TEMPERATURE = 110               # bed temperature for measurements
+HE_TEMPERATURE = 245                # extruder temperature for measurements
 MEASURE_INTERVAL = 1
 N_SAMPLES = 3
 HOT_DURATION = 3                    # time after bed temp reached to continue
@@ -41,8 +41,9 @@ FRAME_SENSOR = "temperature_sensor frame"
 CHAMBER_SENSOR = "temperature_sensor chamber"
 # Extra temperature sensors to collect. Use same format as above but seperate
 # quoted names with commas (if more than one).
-EXTRA_SENSORS = {"frame1": "temperature_sensor frame1",
-                 "z_switch": "temperature_sensor z_switch"}
+EXTRA_SENSORS = {}
+#EXTRA_SENSORS = {"toolhead": "temperature_sensor ToolHead"}
+#                 "z_switch": "temperature_sensor z_switch"}
 
 #####################################
 
@@ -153,7 +154,7 @@ def send_gcode_nowait(cmd=''):
     return True
 
 
-def send_gcode(cmd='', retries=1):
+def send_gcode(cmd='', retries=5):
     url = BASE_URL + "/printer/gcode/script?script=%s" % cmd
     resp = post(url)
     success = None
